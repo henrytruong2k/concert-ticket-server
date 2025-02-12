@@ -1,6 +1,6 @@
-import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/userModel";
+import { verifyPassword } from "../utils/passwordUtils";
 
 const authController = {
   async login(req, res) {
@@ -11,8 +11,8 @@ const authController = {
       if (!user) {
         return res.status(400).json({ message: "Invalid email or password" });
       }
-      const isPasswordValid = await bcrypt.compare(passwordReq, user.password);
-      if (!isPasswordValid) {
+     
+      if (!verifyPassword(passwordReq, user.password)) {
         return res.status(401).json({ message: "Invalid email or password" });
       }
 

@@ -1,5 +1,7 @@
 import QRCode from "qrcode";
 import Ticket from "../models/ticketModel";
+import sendMail from "../services/emailService";
+import { createMomoPayment } from "../services/momoService";
 
 const ticketController = {
   getMany: async (req, res) => {
@@ -102,6 +104,24 @@ const ticketController = {
       return res.status(500).json({ msg: "Lỗi hệ thống" });
     }
   },
+
+  buyTicket: async (req, res) => {
+    const { email, amount } = req.body;
+    const momoResponse = await createMomoPayment(amount);
+    if (!momoResponse) return res.status(500).json({msg: "Lỗi hệ thống cổng thanh toán"});
+    if (
+      !(await sendMail(
+        email,
+        momoResponse.shortLink,
+        "THANH TOÁN"
+      ))
+    )
+      return res.status(500).json({ msg: "Lỗi gửi email" });
+    return res.status(200).json({
+      status: "success",
+      msg: "Thông tin thanh toán đã gửi đến email. Vui lòng kiểm tra email"
+    })
+  }
 };
 
 export default ticketController;

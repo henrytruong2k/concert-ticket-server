@@ -1,5 +1,5 @@
 import User from "../models/userModel";
-import bcrypt from "bcrypt";
+import { hashPassword } from "../utils/passwordUtils";
 
 const userController = {
   async createUser(req, res) {
@@ -10,12 +10,12 @@ const userController = {
         return res.status(400).json({ message: "Email already in use" });
       }
 
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const hashedPassword = await hashPassword(password);
 
       const newUser = new User({
         email,
         password: hashedPassword,
-        role: role || "attendee", // Mặc định role là "attendee"
+        role: role || "attendee",
       });
 
       await newUser.save();

@@ -22,8 +22,8 @@ const auth = async (
     if (!decoded) return res.status(401).json({ msg: "Invalid token" });
 
     const user = await User.findOne({ _id: decoded.id }).select("-password");
-    if (!user) return res.status(401).json({ msg: "User does not exist" });
 
+    if (!user) return res.status(401).json({ msg: "User does not exist" });
     req.user = user;
     next();
   } catch (err: any) {

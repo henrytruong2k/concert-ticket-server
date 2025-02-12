@@ -9,5 +9,6 @@ router.get("/ticket", auth, ticketController.getMany);
 router.get("/ticket/:id", auth, ticketController.getOne);
 router.post("/ticket", auth, ticketController.createOne);
 router.post("/ticket/scan", auth, ticketController.scanTicket);
+router.post("/ticket/buy", auth, ticketController.buyTicket);
 
 export default router;
