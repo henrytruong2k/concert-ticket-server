@@ -106,21 +106,21 @@ const ticketController = {
   },
 
   buyTicket: async (req, res) => {
-    const { email, amount } = req.body;
-    const momoResponse = await createMomoPayment(amount);
-    if (!momoResponse) return res.status(500).json({msg: "Lỗi hệ thống cổng thanh toán"});
-    if (
-      !(await sendMail(
-        email,
-        momoResponse.shortLink,
-        "THANH TOÁN"
-      ))
-    )
-      return res.status(500).json({ msg: "Lỗi gửi email" });
-    return res.status(200).json({
-      status: "success",
-      msg: "Thông tin thanh toán đã gửi đến email. Vui lòng kiểm tra email"
-    })
+    try {
+      const { email, amount } = req.body;
+      const payment = await createMomoPayment(amount);
+
+      sendMail(email, payment.shortLink, "THANH TOÁN").catch((err) =>
+        console.error("Lỗi gửi email:", err),
+      );
+      return res.status(200).json({
+        status: "success",
+        msg: "Thông tin thanh toán đã gửi đến email. Vui lòng kiểm tra email",
+      });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({msg: err.message});
+    }
   }
 };
 

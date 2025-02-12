@@ -1,8 +1,8 @@
 import cors from "cors";
 import dotenv from "dotenv";
-import express, { Request, Response } from "express";
+import express from "express";
 import morgan from "morgan";
-import { resolve } from "path";
+import path, { resolve } from "path";
 import { cloudinaryConfig } from "./configs/cloudinary";
 import timeoutMiddleware from "./middlewares/timeout";
 import routes from "./routes";
@@ -21,19 +21,35 @@ app.use(timeoutMiddleware);
 // Routes
 app.use("/api", routes);
 
+// Commom api
+app.get("/payment-result", (req, res) => {
+  const { resultCode, orderId, amount, message } = req.query;
+
+  res.render("payment-result", {
+    resultCode,
+    orderId,
+    amount,
+    message,
+  });
+});
+
 app.get("/timeout/:second", async (req, res) => {
   try {
     const timeoutSecond = Number(req.params.second);
     await new Promise((resolve) => setTimeout(resolve, timeoutSecond * 1000));
 
-    res.status(200).json({ message: `Hoàn thành sau ${timeoutSecond} giây` });
+    res.status(200).json({ msg: `Hoàn thành sau ${timeoutSecond} giây` });
   } catch (error) {
-    res.status(500).json({ error: "Lỗi trong quá trình xử lý" });
+    res.status(500).json({ msg: "Lỗi trong quá trình xử lý" });
   }
 });
 
 // Database
 import "./configs/database";
+
+// EJS
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
 // Static
 app.use(express.static(resolve(__dirname, "public")));

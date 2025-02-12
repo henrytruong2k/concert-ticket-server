@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kết quả thanh toán</title>
+  </head>
+
+  <body>
+    <h1>Kết quả thanh toán</h1>
+    <p>
+      <strong>Trạng thái:</strong>
+      <%= resultCode==="0" ? "Thành công" : "Thất bại" %>
+    </p>
+    <p>
+      <strong>Mã đơn hàng:</strong>
+      <%= orderId %>
+    </p>
+    <p>
+      <strong>Số tiền:</strong>
+      <%= amount %> VND
+    </p>
+    <p>
+      <strong>Tin nhắn:</strong>
+      <%= message %>
+    </p>
+  </body>
+</html>

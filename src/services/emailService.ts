@@ -32,7 +32,8 @@ const sendMail = async (to: string, url: string, text: string): Promise<boolean>
             `,
     };
 
-    return transporter.sendMail(mailOptions);
+    await transporter.sendMail(mailOptions);
+    return true;
   } catch (error) {
     console.log(error);
     return false;

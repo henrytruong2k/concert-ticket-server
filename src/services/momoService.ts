@@ -29,7 +29,7 @@ export const createMomoPayment = async (
   amount: string,
 ): Promise<MomoPaymentResponse> => {
   const orderInfo = "Thanh toán vé xem hoà nhạc";
-  const redirectUrl = `${baseUrl}/ok`;
+  const redirectUrl = `${baseUrl}/payment-result`;
   const ipnUrl = `${baseUrl}/callback`;
   const requestType = "payWithMethod";
   const orderId = partnerCode + new Date().getTime();
