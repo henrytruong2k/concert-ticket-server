@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
 
-// Middleware Timeout (5 giây)
 const timeoutMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const controller = new AbortController();
   const timeout = setTimeout(() => {
@@ -10,7 +9,7 @@ const timeoutMiddleware = (req: Request, res: Response, next: NextFunction) => {
 
   (req as any).abortController = controller;
 
-  res.on("finish", () => clearTimeout(timeout)); // Xóa timeout nếu request kết thúc bình thường
+  res.on("finish", () => clearTimeout(timeout)); // clear if task done
   next();
 };
 

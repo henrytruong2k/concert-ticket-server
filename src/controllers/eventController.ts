@@ -1,3 +1,5 @@
+import { error } from "console";
+import { cloudinary } from "../configs/cloudinary";
 import Event from "../models/eventModel";
 
 const eventController = {
@@ -30,6 +32,9 @@ const eventController = {
     }
   },
   createOne: async (req, res) => {
+    const file = req.file;
+    const image = file.path;
+    const publicId = file.filename;
     try {
       const { name, location, date, amount } = req.body;
       const event = new Event({
@@ -37,11 +42,16 @@ const eventController = {
         location,
         date,
         amount,
+        image,
+        publicId,
       });
       await event.save();
-      return res.status(201).json(event);
+      return res.status(201).json();
     } catch (err) {
       console.log(err);
+      cloudinary.uploader.destroy(file.filename).catch((err) => {
+        console.error("Failed to delete image:", err);
+      });
       return res.status(500).json({ msg: err.message });
     }
   },
@@ -68,13 +78,18 @@ const eventController = {
   deleteOne: async (req, res) => {
     try {
       const { id } = req.params;
-      console.log(id);
-      const deletedEvent = await Event.findByIdAndDelete(id);
-
-      if (!deletedEvent) {
+      const event = await Event.findById(id);
+      if (!event) {
         return res.status(404).json({ msg: "Event not found" });
       }
 
+      if (event.publicId) {
+        cloudinary.uploader.destroy(event.publicId).catch((err) => {
+          console.error("Failed to delete image:", err);
+        });
+      }
+
+      await Event.deleteOne({ _id: id });
       return res.status(200).json({ msg: "Event deleted successfully" });
     } catch (err) {
       return res.status(500).json({ msg: err.message });

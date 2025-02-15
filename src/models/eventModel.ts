@@ -5,6 +5,8 @@ export interface IEvent extends Document {
   location: string;
   date: Date;
   amount: number;
+  image: string;
+  publicId: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -15,6 +17,8 @@ const eventSchema = new mongoose.Schema(
     location: { type: String, required: true },
     date: { type: Date, required: true },
     amount: { type: Number, required: true },
+    image: { type: String, required: true },
+    publicId: { type: String, required: true, unique: true },
   },
   {
     timestamps: true,

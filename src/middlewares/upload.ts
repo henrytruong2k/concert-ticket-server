@@ -1,28 +1,19 @@
 import multer from "multer";
-import DatauriParser from "datauri/parser";
-import path from "path";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import { cloudinary } from "../configs/cloudinary";
+import path from "path";
 
-// const storage = multer.memoryStorage();
 const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
+  cloudinary,
   params: (req, file) => {
     return {
-      folder: "demo-nodejs",
+      folder: "events",
+      format: file.mimetype.split("/")[1].replace("jpeg", "jpg"), //cloudinary not use jpeg
+      public_id: path.parse(file.originalname).name,
     };
   },
 });
-const multerUploads = multer({ storage }).single("image");
-const parser = new DatauriParser();
-/**
- * @description This function converts the buffer to data url
- * @param {Object} req containing the field object
- * @returns {String} The data url from the string buffer
- */
-const dataUri = (req) =>
-  parser.format(
-    path.extname(req.file.originalname).toString(),
-    req.file.buffer,
-  );
-export { multerUploads, dataUri };
+
+const upload = multer({ storage });
+
+export default upload;
