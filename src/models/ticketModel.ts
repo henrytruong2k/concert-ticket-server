@@ -3,14 +3,27 @@ import mongoose, { Schema } from "mongoose";
 export interface ITicket extends Document {
   eventId: mongoose.Types.ObjectId;
   userId: mongoose.Types.ObjectId;
-  entered: boolean;
+  orderId: string;
+  amount: number;
+  status: "PENDING" | "PAID" | "FAILED";
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-const ticketSchema = new Schema<ITicket>({
-  eventId: { type: Schema.Types.ObjectId, ref: "Event", required: true },
-  userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-  entered: { type: Boolean, default: false },
-});
+const ticketSchema: Schema = new Schema(
+  {
+    eventId: { type: String, required: true },
+    userId: { type: String, required: true },
+    orderId: { type: String, required: true, unique: true },
+    amount: { type: Number, required: true },
+    status: {
+      type: String,
+      enum: ["PENDING", "PAID", "FAILED"],
+      default: "PENDING",
+    },
+  },
+  { timestamps: true },
+);
 
 ticketSchema.post("save", async function (doc, next) {
   await mongoose.model("Event").findByIdAndUpdate(doc.eventId, {

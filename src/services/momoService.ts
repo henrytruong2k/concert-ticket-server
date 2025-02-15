@@ -22,22 +22,24 @@ const baseUrl = process.env.PAYMENT_BASE_URL;
 const momoUrl = process.env.PAYMENT_MOMO_URL;
 const partnerCode = process.env.PAYMENT_PARTNER_CODE;
 
-const createSignature = (rawSignature) =>
+const createSignature = (rawSignature: string) =>
   crypto.createHmac("sha256", secretKey).update(rawSignature).digest("hex");
 
 export const createMomoPayment = async (
-  amount: string,
+  userId,
+  event: any,
 ): Promise<MomoPaymentResponse> => {
   const orderInfo = "Thanh toán vé xem hoà nhạc";
   const redirectUrl = `${baseUrl}/payment-result`;
-  const ipnUrl = `${baseUrl}/callback`;
+  const ipnUrl = `${baseUrl}/api/ticket/ipn`;
   const requestType = "payWithMethod";
   const orderId = partnerCode + new Date().getTime();
   const requestId = orderId;
-  const extraData = "";
+  const extraData = `eventId=${event.eventId}&userId=${userId}`;
   const orderGroupId = "";
   const autoCapture = true;
   const lang = "vi";
+  const amount = event.amount;
   //before sign HMAC SHA256 with format
   //accessKey=$accessKey&amount=$amount&extraData=$extraData&ipnUrl=$ipnUrl&orderId=$orderId&orderInfo=$orderInfo&partnerCode=$partnerCode&redirectUrl=$redirectUrl&requestId=$requestId&requestType=$requestType
   const rawSignature = [

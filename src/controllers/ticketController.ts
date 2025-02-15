@@ -107,8 +107,9 @@ const ticketController = {
 
   buyTicket: async (req, res) => {
     try {
-      const { email, amount } = req.body;
-      const payment = await createMomoPayment(amount);
+      const { email, event } = req.body;
+      const userId = req.user?.id;
+      const payment = await createMomoPayment(userId, event);
 
       sendMail(email, payment.shortLink, "THANH TOÁN").catch((err) =>
         console.error("Lỗi gửi email:", err),
@@ -119,9 +120,49 @@ const ticketController = {
       });
     } catch (err) {
       console.log(err);
-      return res.status(500).json({msg: err.message});
+      return res.status(500).json({ msg: err.message });
     }
-  }
+  },
+  ipn: async (req, res) => {
+    try {
+      const { extraData, resultCode, orderId, amount } = req.body;
+      if (resultCode !== 0) {
+        console.log(`Giao dịch thất bại: ${orderId}, Mã lỗi: ${resultCode}`);
+        return res.status(400).json({ msg: "Giao dịch thất bại!" });
+      }
+
+      const params = new URLSearchParams(extraData);
+      const eventId = params.get("eventId");
+      const userId = params.get("userId");
+
+      if (!eventId || !userId) {
+        return res.status(400).json({ msg: "Thiếu eventId hoặc userId" });
+      }
+
+      const existingTicket = await Ticket.findOne({ eventId, userId });
+
+      if (existingTicket) {
+        return res.status(409).json({ msg: "Vé đã được đặt trước đó!" });
+      }
+
+      const ticket = new Ticket({
+        eventId,
+        userId,
+        amount,
+        orderId,
+        status: "PAID",
+      });
+
+      await ticket.save();
+
+      console.log(`Thanh toán thành công, tạo vé: ${ticket._id}`);
+
+      return res.status(200).json({ msg: "Thanh toán thành công!", ticket });
+    } catch (err: any) {
+      console.error("Lỗi xử lý IPN:", err);
+      return res.status(500).json({ msg: "Lỗi hệ thống!", error: err.message });
+    }
+  },
 };
 
 export default ticketController;

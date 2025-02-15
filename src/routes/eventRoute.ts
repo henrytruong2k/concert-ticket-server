@@ -7,5 +7,6 @@ const router = express.Router();
 router.get("/event", eventController.getMany);
 router.get("/event/:id", eventController.getOne);
 router.post("/event", auth, eventController.createOne);
+router.delete("/event/:id", auth, eventController.deleteOne);
 
 export default router;
