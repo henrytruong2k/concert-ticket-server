@@ -11,7 +11,7 @@ const authController = {
       if (!user) {
         return res.status(400).json({ message: "Invalid email or password" });
       }
-     
+
       if (!verifyPassword(passwordReq, user.password)) {
         return res.status(401).json({ message: "Invalid email or password" });
       }
@@ -19,7 +19,7 @@ const authController = {
       const token = jwt.sign(
         { id: user._id, role: user.role },
         process.env.JWT_SECRET,
-        { expiresIn: "1d" },
+        { expiresIn: "1y" },
       );
 
       const { password, ...userWithoutPassword } = user.toObject();

@@ -28,6 +28,9 @@ const auth = async (
     next();
   } catch (err: any) {
     console.log(err);
+    if (err.name === "TokenExpiredError") {
+      return res.status(403).json({ message: "Token hết hạn" });
+    }
     return res.status(500).json({ message: err.message });
   }
 };
