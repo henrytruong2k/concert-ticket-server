@@ -6,13 +6,14 @@ export interface ITicket extends Document {
   orderId: string;
   amount: number;
   status: "PENDING" | "PAID" | "FAILED";
+  entered: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
 
 const ticketSchema: Schema = new Schema(
   {
-    eventId: { type: String, required: true },
+    eventId: { type: mongoose.Schema.Types.ObjectId, ref: "Event" },
     userId: { type: String, required: true },
     orderId: { type: String, required: true, unique: true },
     amount: { type: Number, required: true },
@@ -21,6 +22,7 @@ const ticketSchema: Schema = new Schema(
       enum: ["PENDING", "PAID", "FAILED"],
       default: "PENDING",
     },
+    entered: { type: Boolean, default: false }, // Thêm field entered
   },
   { timestamps: true },
 );

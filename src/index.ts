@@ -38,9 +38,9 @@ app.get("/timeout/:second", async (req, res) => {
     const timeoutSecond = Number(req.params.second);
     await new Promise((resolve) => setTimeout(resolve, timeoutSecond * 1000));
 
-    res.status(200).json({ msg: `Hoàn thành sau ${timeoutSecond} giây` });
+    res.status(200).json({ message: `Hoàn thành sau ${timeoutSecond} giây` });
   } catch (error) {
-    res.status(500).json({ msg: "Lỗi trong quá trình xử lý" });
+    res.status(500).json({ message: "Lỗi trong quá trình xử lý" });
   }
 });
 

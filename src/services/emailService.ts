@@ -1,6 +1,11 @@
 import nodemailer from "nodemailer";
 
-const sendMail = async (to: string, url: string, text: string): Promise<boolean> => {
+const sendMail = async (
+  to: string,
+  url: string,
+  shortUrl: string,
+  text: string,
+): Promise<boolean> => {
   try {
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
@@ -27,7 +32,8 @@ const sendMail = async (to: string, url: string, text: string): Promise<boolean>
                 
                     <p>Nếu nút này không hoạt động vì bất kỳ lý do gì, bạn cũng có thể nhấp vào liên kết bên dưới:</p>
                 
-                    <div>${url}</div>
+                    <div>Link 1: ${url}</div>
+                    <div>Link 2: ${shortUrl}</div>
                 </div>
             `,
     };

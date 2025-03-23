@@ -13,7 +13,7 @@ const eventController = {
         data: events,
       });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ message: err.message });
     }
   },
   getOne: async (req, res) => {
@@ -21,14 +21,14 @@ const eventController = {
       const event = await Event.findById(req.params.id);
       if (!event)
         return res.status(404).json({
-          msg: "This ticket does not exist",
+          message: "This ticket does not exist",
         });
 
       return res.status(200).json({
         data: event,
       });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ message: err.message });
     }
   },
   createOne: async (req, res) => {
@@ -52,7 +52,7 @@ const eventController = {
       cloudinary.uploader.destroy(file.filename).catch((err) => {
         console.error("Failed to delete image:", err);
       });
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ message: err.message });
     }
   },
 
@@ -67,11 +67,11 @@ const eventController = {
       );
 
       if (!event)
-        return res.status(404).json({ msg: "This ticket does not exist" });
+        return res.status(404).json({ message: "This ticket does not exist" });
 
       return res.status(200).json(event);
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ message: err.message });
     }
   },
 
@@ -80,7 +80,7 @@ const eventController = {
       const { id } = req.params;
       const event = await Event.findById(id);
       if (!event) {
-        return res.status(404).json({ msg: "Event not found" });
+        return res.status(404).json({ message: "Event not found" });
       }
 
       if (event.publicId) {
@@ -90,9 +90,9 @@ const eventController = {
       }
 
       await Event.deleteOne({ _id: id });
-      return res.status(200).json({ msg: "Event deleted successfully" });
+      return res.status(200).json({ message: "Event deleted successfully" });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ message: err.message });
     }
   },
 };

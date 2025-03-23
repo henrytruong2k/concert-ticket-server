@@ -29,13 +29,14 @@ export const createMomoPayment = async (
   userId,
   event: any,
 ): Promise<MomoPaymentResponse> => {
+  console.log(event);
   const orderInfo = "Thanh toán vé xem hoà nhạc";
   const redirectUrl = `${baseUrl}/payment-result`;
   const ipnUrl = `${baseUrl}/api/ticket/ipn`;
   const requestType = "payWithMethod";
   const orderId = partnerCode + new Date().getTime();
   const requestId = orderId;
-  const extraData = `eventId=${event.eventId}&userId=${userId}`;
+  const extraData = `eventId=${event._id}&userId=${userId}`;
   const orderGroupId = "";
   const autoCapture = true;
   const lang = "vi";

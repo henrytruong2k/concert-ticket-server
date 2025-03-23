@@ -24,7 +24,7 @@ const userController = {
         message: "User created successfully",
       });
     } catch (error) {
-      return res.status(500).json({ msg: error.message });
+      return res.status(500).json({ message: error.message });
     }
   },
 };
