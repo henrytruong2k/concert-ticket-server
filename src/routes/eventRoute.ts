@@ -8,6 +8,7 @@ const router = express.Router();
 router.get("/event", eventController.getMany);
 router.get("/event/:id", eventController.getOne);
 router.post("/event", auth, upload.single("file"), eventController.createOne);
+router.put("/event/:id", auth, upload.any(), eventController.updateOne);
 router.delete("/event/:id", auth, eventController.deleteOne);
 
 export default router;

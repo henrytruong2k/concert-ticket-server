@@ -58,20 +58,52 @@ const eventController = {
 
   updateOne: async (req, res) => {
     try {
-      const { name, location, date } = req.body;
+      const { name, location, date, amount } = req.body;
+      const eventId = req.params.id;
 
-      const event = await Event.findByIdAndUpdate(
-        req.params.id,
-        { name, location, date },
+      const event = await Event.findById(eventId);
+      if (!event)
+        return res.status(404).json({ message: "Sự kiện không tồn tại" });
+      let newImageUrl = event.image;
+      let newPublicId = event.publicId;
+
+      console.log("Danh sách file nhận được:", req.files);
+
+      if (req.files.length === 0) {
+        console.log("Không có ảnh mới, giữ nguyên ảnh cũ.");
+      } else {
+        console.log("Đang xử lý ảnh mới...");
+
+        newImageUrl = req.files[0].path;
+        newPublicId = req.files[0].filename;
+
+        if (event.publicId) {
+          console.log("Xóa ảnh cũ:", event.publicId);
+          cloudinary.uploader
+            .destroy(event.publicId)
+            .catch((error) => console.log(error));
+        }
+
+        console.log("Ảnh mới đã upload:", newImageUrl);
+      }
+
+      await Event.findByIdAndUpdate(
+        eventId,
+        {
+          name,
+          location,
+          date,
+          amount,
+          image: newImageUrl,
+          publicId: newPublicId,
+        },
         { new: true },
       );
 
-      if (!event)
-        return res.status(404).json({ message: "This ticket does not exist" });
-
-      return res.status(200).json(event);
+      return res.status(200).json();
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      console.log("Lỗi cập nhật sự kiện:", err);
+      return res.status(500).json({ message: err });
     }
   },
 
